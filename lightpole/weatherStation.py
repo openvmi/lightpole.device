@@ -1,6 +1,3 @@
-from tkinter.messagebox import NO
-import serial
-
 class WeatherStationDevice:
     def __init__(self, channel) -> None:
         self._channel = channel

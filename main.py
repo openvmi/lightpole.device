@@ -1,4 +1,3 @@
-from email.policy import default
 from lightpole.app import App
 from lightpole.config import getConfiguration
 

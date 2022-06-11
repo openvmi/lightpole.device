@@ -2,6 +2,7 @@ import sys
 from .mqttChannel import MqttChannel
 from .protocol import Protocol
 from .weatherStation import WeatherStationDevice
+from .streetLight import StreetLighting
 from .uartChannel import UartChannel
 import threading
 import time
@@ -24,6 +25,7 @@ class App:
 
         self._uart = UartChannel()
         self._weatherStation = WeatherStationDevice(channel=self._uart)
+        self._streetLight = StreetLighting(channel=self._uart)
         self._mqtt = MqttChannel(deviceId=self._deviceId, deviceArea=self._deviceArea, host=self._mqttHost, port=self._mqttPort,onmessage=self._onMessage)
         self._mqttThread = None
 

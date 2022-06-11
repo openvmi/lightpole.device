@@ -1,7 +1,15 @@
 class WeatherStationDevice:
     def __init__(self, channel) -> None:
         self._channel = channel
-        self._status = "normal"
+        self._windSpeedStatus = "unknown"
+        self._temperatureStatus = "unknown"
+        self._humidityStatus = "unknown"
+        self._illuminanceStatus = "unknown"
+        self._noiseStatus = "unknown"
+        self._rainStatus = "unknown"
+        self._pm2_5Status = "unknown"
+        self._pm10Status = "unknown"
+
 
     @property
     def windSpeed(self):

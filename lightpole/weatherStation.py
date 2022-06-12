@@ -91,6 +91,25 @@ class WeatherStationDevice:
             self._pm10Status = "normal"
         return result
 
+    def _checkStatus(self, status):
+        if self._windSpeedStatus == status and \
+            self._temperatureStatus == status and \
+            self._humidityStatus == status and \
+            self._illuminanceStatus == status and \
+            self._noiseStatus == status and \
+            self._rainStatus == status and \
+            self._pm2_5Status == status and \
+            self._pm10Status == status:
+            return True
+            
+    @property
+    def status(self):
+        if self._checkStatus("unknown"):
+            return "unknown"
+        if self._checkStatus("normal"):
+            return "normal"
+        return "error"                                                                        
+
 
 if __name__ == "__main__":
     from .uartChannel import UartChannel

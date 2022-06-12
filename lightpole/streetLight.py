@@ -77,4 +77,21 @@ class StreetLighting:
     def brightness(self, value):
         print('trying to set brightness')
         self._brightness = value
+    
+    def _checkStatus(self, status):
+        if self._iccardStatus == status and \
+            self._inputvoltageStatus == status and \
+            self._outputcurrentStatus == status and \
+            self._outputpowerStatus == status and \
+            self._electricityConsumptionStatus == status and \
+            self._brightnessStatus == status :
+            return True
+            
+    @property
+    def status(self):
+        if self._checkStatus("unknown"):
+            return "unknown"
+        if self._checkStatus("normal"):
+            return "normal"
+        return "error"  
 

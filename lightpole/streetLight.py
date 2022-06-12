@@ -12,7 +12,7 @@ class StreetLighting:
         self._brightnessStatus = 'unknown'
         self._brightness = 0
 
-        self._workMode = "smart"
+        self._workMode = "manual"
 
     @property
     def iccard(self):

@@ -8,7 +8,7 @@ import threading
 import time
 import json
 
-
+from datetime import datetime
 class App:
     def __init__(self, mqttHost, mqttPort, uartPort='/dev/ttyUSB0', 
                         uartBaudrate=9600,
@@ -34,6 +34,50 @@ class App:
 
         self._notifySensorStatusDuration = 30
         self._notifySensorStatusTopic = 'device/' + self._deviceArea + '/' + self._deviceId + '/notify'
+
+        self._streetLightWorkThread = None
+        self._streetLightWorkMode = "manual"
+        self._quitTask = True
+
+    '''
+    startDate:{hour:12, minute: 23}
+    duration: {hourDuration:15, minuteDuration: 43}
+    '''
+    def _timerModeTask(self,startDate, duration):
+        endMinutes = startDate.minute + duration.minuteDuration
+        endHour = startDate.hour + duration.hourDuration
+        hasNextDay = False
+        if endMinutes >= 60:
+            endHour = endHour + 1
+            endMinutes = endMinutes % 60
+        if endHour >= 24:
+            hasNextDay = True
+            endHour = endHour % 24
+        while self._quitTask is False:
+            time.sleep(10)
+            now = datetime.now()
+            hour = now.hour
+            minute = now.minute
+            if hasNextDay is True:
+                if hour >= startDate.hour and minute >= startDate.minute:
+                    self._streetLight.brightness = 100
+                elif hour <= endHour and minute <= endMinutes:
+                    self._streetLight.brightness = 100
+                else:
+                    self._streetLight.brightness = 0
+            
+            if hasNextDay is False:
+                if hour < startDate.hour:
+                    self._streetLight.brightness = 0
+                elif hour == startDate.hour and minute <= startDate.minute:
+                    self._streetLight.brightness = 0
+                elif hour > endHour:
+                    self._streetLight.brightness = 0
+                elif hour == endHour and minute >= endMinutes:
+                    self._streetLight.brightness = 0
+                else:
+                    self._streetLight.brightness = 100
+
 
     def _getPingMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
@@ -72,6 +116,18 @@ class App:
             return
         self._mqttThread = threading.Thread(name='mqttThread', target=self._mqtt.run, daemon=True)
         self._mqttThread.start()
+        startDate = {
+            "hour": 19,
+            "minute": 0
+        }
+        duration = {
+            "hourDuration": 9,
+            "minuteDuration": 0
+        }
+        self._quitTask = True
+        self._streetLightWorkThread = threading.Thread(name="streetThread",target=self._timerModeTask,args=(startDate, duration))
+        self._streetLightWorkThread.start()
+
         sleepCount = 10
         while True:
             if sleepCount >= self._pingDuration and sleepCount % self._pingDuration  == 0:

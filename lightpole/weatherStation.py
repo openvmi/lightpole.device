@@ -145,7 +145,7 @@ if __name__ == "__main__":
     uartChannel = UartChannel()
     dev = WeatherStationDevice(channel=uartChannel)
     while True:
-        print(">>>>>>>>开始数据查询>>>>>>>")
+        print(">>>>>>>>开始气象站数据查询>>>>>>>")
         print("windSpeed:", dev.windSpeed())
         time.sleep(5)
         print("temperature:", dev.temperature())
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         print("pm10:", dev.pm10())
         time.sleep(5)
         print("carbonDioxide:", dev.carbonDioxide())
-        print("<<<<<<<<<查询结束<<<<<<<<<<<<<")
+        print("<<<<<<<<<气象站查询结束<<<<<<<<<<<<<")
         print("")
         print("")
         print("")

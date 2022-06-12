@@ -93,5 +93,9 @@ class StreetLighting:
             return "unknown"
         if self._checkStatus("normal"):
             return "normal"
-        return "error"  
+        return "error"
+
+    @property
+    def inspectionStatus(self):
+        return self._iccardStatus  
 

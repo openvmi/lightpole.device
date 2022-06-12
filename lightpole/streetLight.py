@@ -77,7 +77,7 @@ class StreetLighting:
 
     @property
     def brightness(self):
-        command = bytes([0x05, 0x06, 0x00, 0x04, 0x00, 0x32, 0x48, 0x5A])
+        command = bytes([0x05, 0x04, 0x00, 0x06, 0x00, 0x01, 0xD0, 0x4F])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._brightnessStatus = 'error'
@@ -111,3 +111,19 @@ class StreetLighting:
     def inspectionStatus(self):
         return self._iccardStatus  
 
+if __name__ == "__main__":
+    from .uartChannel import UartChannel
+    import time
+    uartChannel = UartChannel()
+    dev = StreetLighting(channel=uartChannel)
+    while True:
+        print(">>>>>>>>开始路灯数据查询>>>>>>>")
+        print("iccard:", dev.iccard())
+        time.sleep(5)
+        print("iccard:", dev.iccard())
+        time.sleep(5)
+        print("<<<<<<<<<查询结束<<<<<<<<<<<<<")
+        print("")
+        print("")
+        print("")
+        time.sleep(30)

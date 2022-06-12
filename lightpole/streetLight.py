@@ -22,6 +22,8 @@ class StreetLighting:
             self._iccardStatus = 'error'
         else:
             self._iccardStatus = 'normal'
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1)
         return result
 
     @property
@@ -32,6 +34,8 @@ class StreetLighting:
             self._inputvoltageStatus = 'error'
         else:
             self._inputvoltageStatus = 'normal'
+            result = int(str(int(hex(result[4]<<8|result[5]),16))+str(int(hex(result[6]<<8|result[7]),16)))
+            result = round(result/1)
         return result
 
     @property
@@ -42,6 +46,8 @@ class StreetLighting:
             self._outputcurrentStatus = 'error'
         else:
             self._outputcurrentStatus = 'normal'
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1000)
         return result
 
     @property
@@ -52,6 +58,8 @@ class StreetLighting:
             self._outputpowerStatus = 'error'
         else:
             self._outputpowerStatus = 'normal'
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/10)
         return result
 
     @property
@@ -62,6 +70,8 @@ class StreetLighting:
             self._electricityConsumptionStatus = 'error'
         else:
             self._electricityConsumptionStatus = 'normal'
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1000)
         return result
    
 

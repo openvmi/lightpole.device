@@ -19,6 +19,8 @@ class WeatherStationDevice:
             self._windSpeedStatus = "error"
         else:
             self._windSpeedStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/10)
         return result
 
     @property
@@ -29,6 +31,8 @@ class WeatherStationDevice:
             self._temperatureStatus = "error"
         else:
             self._temperatureStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/10)
         return result
 
     @property
@@ -39,6 +43,8 @@ class WeatherStationDevice:
             self._humidityStatus = "error"
         else:
             self._humidityStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/10)
         return result
 
     @property
@@ -49,6 +55,8 @@ class WeatherStationDevice:
             self._illuminanceStatus = "error"
         else:
             self._illuminanceStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/10)
         return result
 
     @property
@@ -59,6 +67,8 @@ class WeatherStationDevice:
             self._noiseStatus = "error"
         else:
             self._noiseStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1)
         return result
     
     @property
@@ -69,6 +79,8 @@ class WeatherStationDevice:
             self._rainStatus = "error"
         else:
             self._rainStatus = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1)
         return result
 
     @property
@@ -79,6 +91,8 @@ class WeatherStationDevice:
             self._pm2_5Status = "error"
         else:
             self._pm2_5Status = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1)
         return result
 
     @property
@@ -89,12 +103,14 @@ class WeatherStationDevice:
             self._pm10Status = "error"
         else:
             self._pm10Status = "normal"
+            result = int(hex(result[4]<<8|result[5]),16)
+            result = round(result/1)
         return result
 
     @property
     def carbonDioxide(self):
         return 0
-        
+
     def _checkStatus(self, status):
         if self._windSpeedStatus == status and \
             self._temperatureStatus == status and \

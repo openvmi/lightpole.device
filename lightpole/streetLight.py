@@ -12,6 +12,8 @@ class StreetLighting:
         self._brightnessStatus = 'unknown'
         self._brightness = 0
 
+        self._workMode = "smart"
+
     @property
     def iccard(self):
         command = bytes([0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0x5E])

@@ -52,7 +52,7 @@ class WeatherStationDevice:
         return result
 
     @property
-    def moise(self):
+    def noise(self):
         command = bytes([0x01, 0x03, 0x01, 0xF6, 0x00, 0x01, 0x65, 0xC4])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
@@ -91,6 +91,10 @@ class WeatherStationDevice:
             self._pm10Status = "normal"
         return result
 
+    @property
+    def carbonDioxide(self):
+        return 0
+        
     def _checkStatus(self, status):
         if self._windSpeedStatus == status and \
             self._temperatureStatus == status and \

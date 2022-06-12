@@ -45,10 +45,26 @@ class App:
   
     def _getNotifySensorStatusMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
+        proto.temperature = self._weatherStation.temperature
+        proto.humidity = self._weatherStation.humidity
+        proto.illuminance = self._weatherStation.illuminance
+        proto.noise = self._weatherStation.noise
+        proto.windsSpeed = self._weatherStation.windSpeed
+        proto.rain = self._weatherStation.rain
+        proto.pm2_5 = self._weatherStation.pm2_5
+        proto.pm10 = self._weatherStation.pm10
+        proto.carbonDioxide = self._weatherStation.carbonDioxide
+        proto.power = self._streetLight.electricityConsumption
+        proto.lightingLevel = self._streetLight.brightness
+        proto.workMode = self._streetLight._workMode
+        proto.lightingStatus = "normal"
         return proto.getDataInJson()
 
     def _getInspectionStatusMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
+        proto.employeeID = self._streetLight.iccard
+        proto.employeeName = "unknown"
+        proto.employeeTemperature = 28
         return proto.getInspectionStatusInJson()
 
     def run(self):

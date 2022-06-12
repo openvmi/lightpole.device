@@ -37,12 +37,20 @@ class App:
 
     def _getPingMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
+        proto.setEmergencyPowerStatus("normal")
+        proto.setWeatherStationStatus(self._weatherStation.status)
+        proto.setStreetLightingStatus(self._streetLight.status)
+        proto.setInspectionStatus(self._streetLight.inspectionStatus)
         return proto.getPingInJson()
   
     def _getNotifySensorStatusMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
         return proto.getDataInJson()
-        
+
+    def _getInspectionStatusMsg(self):
+        proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
+        return proto.getInspectionStatusInJson()
+
     def run(self):
         if self._mqttThread is not None:
             return

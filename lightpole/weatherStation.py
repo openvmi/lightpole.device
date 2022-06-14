@@ -20,7 +20,8 @@ class WeatherStationDevice:
             result = 0
         else:
             self._windSpeedStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            print("windSpeed", result)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
         return result
 
@@ -33,7 +34,8 @@ class WeatherStationDevice:
             result = 0
         else:
             self._temperatureStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            print("temperature:",result)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
         return result
 
@@ -46,20 +48,20 @@ class WeatherStationDevice:
             result = 0
         else:
             self._humidityStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
         return result
 
     @property
     def illuminance(self):
         command = bytes([0x06, 0x03, 0x01, 0xFA, 0x00, 0x02, 0xE4, 0x71])
-        result = self._channel.queryValue(command=command, responseLength=7)
+        result = self._channel.queryValue(command=command, responseLength=9)
         if result is None:
             self._illuminanceStatus = "error"
             result = 0
         else:
             self._illuminanceStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[5]<<8|result[6]),16)
             result = round(result/10)
         return result
 
@@ -72,8 +74,8 @@ class WeatherStationDevice:
             result = 0
         else:
             self._noiseStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
-            result = round(result/1)
+            result = int(hex(result[3]<<8|result[4]),16)
+            result = round(result/10)
         return result
     
     @property
@@ -85,7 +87,7 @@ class WeatherStationDevice:
             result = 0
         else:
             self._rainStatus = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1)
         return result
 
@@ -98,7 +100,7 @@ class WeatherStationDevice:
             result = 0
         else:
             self._pm2_5Status = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1)
         return result
 
@@ -111,7 +113,7 @@ class WeatherStationDevice:
             result = 0
         else:
             self._pm10Status = "normal"
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1)
         return result
 
@@ -140,32 +142,32 @@ class WeatherStationDevice:
 
 
 if __name__ == "__main__":
-    from .uartChannel import UartChannel
+    from uartChannel import UartChannel
     import time
-    uartChannel = UartChannel()
+    uartChannel = UartChannel(port="COM3")
     dev = WeatherStationDevice(channel=uartChannel)
     while True:
         print(">>>>>>>>开始气象站数据查询>>>>>>>")
-        print("windSpeed:", dev.windSpeed())
-        time.sleep(5)
-        print("temperature:", dev.temperature())
-        time.sleep(5)
-        print("humidity:", dev.humidity())
-        time.sleep(5)
-        print("illuminance:", dev.illuminance())
-        time.sleep(5)
-        print("noise:", dev.noise())
-        time.sleep(5)
-        print("rain:", dev.rain())
-        time.sleep(5)
-        print("pm2_5:", dev.pm2_5())
-        time.sleep(5)
-        print("pm10:", dev.pm10())
-        time.sleep(5)
-        print("carbonDioxide:", dev.carbonDioxide())
+        print("windSpeed:", dev.windSpeed)
+        time.sleep(2)
+        print("temperature:", dev.temperature)
+        time.sleep(2)
+        print("humidity:", dev.humidity)
+        time.sleep(2)
+        print("illuminance:", dev.illuminance)
+        time.sleep(2)
+        print("noise:", dev.noise)
+        time.sleep(2)
+        print("rain:", dev.rain)
+        time.sleep(2)
+        print("pm2_5:", dev.pm2_5)
+        time.sleep(2)
+        print("pm10:", dev.pm10)
+        time.sleep(2)
+        print("carbonDioxide:", dev.carbonDioxide)
         print("<<<<<<<<<气象站查询结束<<<<<<<<<<<<<")
         print("")
         print("")
         print("")
-        time.sleep(30)
+        time.sleep(6)
     

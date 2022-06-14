@@ -16,13 +16,13 @@ class StreetLighting:
 
     @property
     def iccard(self):
-        command = bytes([0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0x5E])
+        command = bytes([0x04, 0x03, 0x00, 0x00, 0x00, 0x01, 0x84, 0x5F])
         result = self._channel.queryValue(command=command, responseLength=7)  
         if result is None:
             self._iccardStatus = 'error'
         else:
             self._iccardStatus = 'normal'
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1)
         return result
 
@@ -34,8 +34,8 @@ class StreetLighting:
             self._inputvoltageStatus = 'error'
         else:
             self._inputvoltageStatus = 'normal'
-            result = int(str(int(hex(result[4]<<8|result[5]),16))+str(int(hex(result[6]<<8|result[7]),16)))
-            result = round(result/1)
+            result = int(hex(result[3] << 8 | result[4]), 16)
+            result = round(result / 10)
         return result
 
     @property
@@ -46,7 +46,7 @@ class StreetLighting:
             self._outputcurrentStatus = 'error'
         else:
             self._outputcurrentStatus = 'normal'
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1000)
         return result
 
@@ -58,7 +58,7 @@ class StreetLighting:
             self._outputpowerStatus = 'error'
         else:
             self._outputpowerStatus = 'normal'
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
         return result
 
@@ -70,7 +70,7 @@ class StreetLighting:
             self._electricityConsumptionStatus = 'error'
         else:
             self._electricityConsumptionStatus = 'normal'
-            result = int(hex(result[4]<<8|result[5]),16)
+            result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1000)
         return result
    
@@ -135,18 +135,18 @@ class StreetLighting:
         return self._iccardStatus  
 
 if __name__ == "__main__":
-    from .uartChannel import UartChannel
+    from uartChannel import UartChannel
     import time
-    uartChannel = UartChannel()
+    uartChannel = UartChannel(port="COM3")
     dev = StreetLighting(channel=uartChannel)
     while True:
         print(">>>>>>>>开始路灯数据查询>>>>>>>")
-        print("iccard:", dev.iccard())
+        print("iccard:", dev.iccard)
         time.sleep(5)
-        print("iccard:", dev.iccard())
+        print("iccard:", dev.iccard)
         time.sleep(5)
         print("<<<<<<<<<查询结束<<<<<<<<<<<<<")
         print("")
         print("")
         print("")
-        time.sleep(30)
+        time.sleep(5)

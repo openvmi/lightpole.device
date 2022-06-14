@@ -26,7 +26,7 @@ class WeatherStationDevice:
 
     @property
     def temperature(self):
-        command = bytes([0x01, 0x03, 0x01, 0xF5, 0x00, 0x01, 0x95, 0xC4])
+        command = bytes([0x06, 0x03, 0x01, 0xF5, 0x00, 0x01, 0x94, 0x73])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._temperatureStatus = "error"
@@ -39,7 +39,7 @@ class WeatherStationDevice:
 
     @property
     def humidity(self):
-        command = bytes([0x01, 0x03, 0x01, 0xF4, 0x00, 0x01, 0xC4, 0x04])
+        command = bytes([0x06, 0x03, 0x01, 0xF4, 0x00, 0x01, 0xC5, 0xB3])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._humidityStatus = "error"
@@ -52,7 +52,7 @@ class WeatherStationDevice:
 
     @property
     def illuminance(self):
-        command = bytes([0x01, 0x03, 0x01, 0xFA, 0x00, 0x02, 0xE5, 0xC6])
+        command = bytes([0x06, 0x03, 0x01, 0xFA, 0x00, 0x02, 0xE4, 0x71])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._illuminanceStatus = "error"
@@ -65,7 +65,7 @@ class WeatherStationDevice:
 
     @property
     def noise(self):
-        command = bytes([0x01, 0x03, 0x01, 0xF6, 0x00, 0x01, 0x65, 0xC4])
+        command = bytes([0x06, 0x03, 0x01, 0xF6, 0x00, 0x01, 0x64, 0x73])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._noiseStatus = "error"
@@ -91,7 +91,7 @@ class WeatherStationDevice:
 
     @property
     def pm2_5(self):
-        command = bytes([0x01, 0x03, 0x01, 0xF7, 0x00, 0x01, 0x34, 0x04])
+        command = bytes([0x06, 0x03, 0x01, 0xF7, 0x00, 0x01, 0x35, 0xB3])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._pm2_5Status = "error"
@@ -104,7 +104,7 @@ class WeatherStationDevice:
 
     @property
     def pm10(self):
-        command = bytes([0x01, 0x03, 0x01, 0xF8, 0x00, 0x01, 0x04, 0x07])
+        command = bytes([0x06, 0x03, 0x01, 0xF8, 0x00, 0x01, 0x05, 0xB0])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._pm10Status = "error"

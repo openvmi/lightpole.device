@@ -16,13 +16,13 @@ class StreetLighting:
 
     @property
     def iccard(self):
-        command = bytes([0x04, 0x03, 0x00, 0x00, 0x00, 0x01, 0x84, 0x5F])
-        result = self._channel.queryValue(command=command, responseLength=7)  
+        command = bytes([0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC4, 0x5E])
+        result = self._channel.queryValue(command=command, responseLength=9)  
         if result is None:
             self._iccardStatus = 'error'
         else:
             self._iccardStatus = 'normal'
-            result = int(hex(result[3]<<8|result[4]),16)
+            result = int(hex(result[5]<<8|result[6]),16)
             result = round(result/1)
         return result
 
@@ -96,7 +96,7 @@ class StreetLighting:
         else:
             self._brightness = 'normal'
             result = int(hex(result[3]<<8|result[4]),16)
-            result = round(result/10)
+            result = round(result/1)
         return result
 
     @brightness.setter
@@ -142,9 +142,23 @@ if __name__ == "__main__":
     while True:
         print(">>>>>>>>开始路灯数据查询>>>>>>>")
         print("iccard:", dev.iccard)
-        time.sleep(5)
+        time.sleep(3)
         print("iccard:", dev.iccard)
-        time.sleep(5)
+        time.sleep(3)
+        dev.brightness  = 50
+        time.sleep(3)
+        print("brightness:", dev.brightness)
+        time.sleep(3)
+        print("inputvoltage:", dev.inputvoltage)
+        time.sleep(3)
+        print("outputcurrent:", dev.outputcurrent)
+        time.sleep(3)
+        print("electricityConsumption:", dev.electricityConsumption)
+        time.sleep(3)
+        dev.brightness  = 0
+        print("brightness:", dev.brightness)
+        time.sleep(3)
+        
         print("<<<<<<<<<查询结束<<<<<<<<<<<<<")
         print("")
         print("")

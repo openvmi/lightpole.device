@@ -63,14 +63,12 @@ class App:
     duration: {hourDuration:15, minuteDuration: 43}
     '''
     def _timerModeTask(self):
-        self._streetLighterTimerself._streetLighterTimerStartDate
-        self._streetLighterTimerDuration
         while True:
             time.sleep(10)
             if not self._streetLightTimerEvent.is_set():
                 continue
-            endMinutes = self._streetLighterTimerStartDate.minute + self._streetLighterTimerDuration.minuteDuration
-            endHour = self._streetLighterTimerStartDate.hour + self._streetLighterTimerDuration.hourDuration
+            endMinutes = self._streetLighterTimerStartDate["minute"] + self._streetLighterTimerDuration["minuteDuration"]
+            endHour = self._streetLighterTimerStartDate["hour"] + self._streetLighterTimerDuration["hourDuration"]
             hasNextDay = False
             if endMinutes >= 60:
                 endHour = endHour + 1
@@ -82,17 +80,21 @@ class App:
             hour = now.hour
             minute = now.minute
             if hasNextDay is True:
-                if hour >= self._streetLighterTimerStartDate.hour and minute >= self._streetLighterTimerStartDate.minute:
+                if hour == self._streetLighterTimerStartDate["hour"] and minute >= self._streetLighterTimerStartDate["minute"]:
                     self._streetLight.brightness = 100
-                elif hour <= endHour and minute <= endMinutes:
+                elif hour > self._streetLighterTimerStartDate["hour"]:
                     self._streetLight.brightness = 100
+                elif hour == endHour and minute <= endMinutes:
+                    self._streetLight.brightness = 100
+                elif hour < endHour:
+                    self._streetLight = 100
                 else:
                     self._streetLight.brightness = 0
             
             if hasNextDay is False:
-                if hour < self._streetLighterTimerStartDate.hour:
+                if hour < self._streetLighterTimerStartDate["hour"]:
                     self._streetLight.brightness = 0
-                elif hour == self._streetLighterTimerStartDate.hour and minute <= self._streetLighterTimerStartDate.minute:
+                elif hour == self._streetLighterTimerStartDate["hour"] and minute <= self._streetLighterTimerStartDate["minute"]:
                     self._streetLight.brightness = 0
                 elif hour > endHour:
                     self._streetLight.brightness = 0
@@ -125,7 +127,7 @@ class App:
         proto.lightingLevel = self._streetLight.brightness
         proto.workMode = self._streetLight._workMode
         proto.lightingStatus = "normal"
-        return proto.getDataInJson()
+        return proto.getSensorStatusInJson()
 
     def _getInspectionStatusMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)

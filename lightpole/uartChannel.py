@@ -12,6 +12,7 @@ class UartChannel:
             try:
                 self._serial = serial.Serial(self._port, self._baudrate, timeout=self._timeout)
             except serial.SerialException:
+                print("error in open serial channel")
                 return None
         try:
             self._serial.write(command)

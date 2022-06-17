@@ -14,9 +14,12 @@ class App:
                         uartBaudrate=9600,
                         uartTimeout=3,
                         deviceId = 'tempId1',
-                        deviceArea= 'tempArea',) -> None:
+                        deviceArea= 'tempArea',
+                        mqttConfig = None) -> None:
         self._mqttHost = mqttHost
         self._mqttPort = mqttPort
+        self._mqttConfig = mqttConfig
+
         self._uartPort = uartPort
         self._uartBaudrate = uartBaudrate
         self._uartTimeout = uartTimeout
@@ -26,7 +29,13 @@ class App:
         self._uart = UartChannel()
         self._weatherStation = WeatherStationDevice(channel=self._uart)
         self._streetLight = StreetLighting(channel=self._uart)
-        self._mqtt = MqttChannel(deviceId=self._deviceId, deviceArea=self._deviceArea, host=self._mqttHost, port=self._mqttPort,onmessage=self._onMessage)
+        self._mqtt = MqttChannel(deviceId=self._deviceId,
+            deviceArea=self._deviceArea,
+            host=self._mqttHost,
+            port=self._mqttPort,
+            onmessage=self._onMessage,
+            configuration=self._mqttConfig)
+
         self._mqttThread = None
 
         self._pingDuration = 10
@@ -37,29 +46,43 @@ class App:
 
         self._streetLightWorkThread = None
         self._streetLightWorkMode = "manual"
+        self._streetLightTimerEvent = threading.Event()
+        self._streetLightTimerEvent.set()
+        self._streetLighterTimerStartDate = {
+            "hour": 19,
+            "minute": 0
+        }
+        self._streetLighterTimerDuration = {
+            "hourDuration": 9,
+            "minuteDuration": 0
+        }
         self._quitTask = True
 
     '''
-    startDate:{hour:12, minute: 23}
+    self._streetLighterTimerStartDate:{hour:12, minute: 23}
     duration: {hourDuration:15, minuteDuration: 43}
     '''
-    def _timerModeTask(self,startDate, duration):
-        endMinutes = startDate.minute + duration.minuteDuration
-        endHour = startDate.hour + duration.hourDuration
-        hasNextDay = False
-        if endMinutes >= 60:
-            endHour = endHour + 1
-            endMinutes = endMinutes % 60
-        if endHour >= 24:
-            hasNextDay = True
-            endHour = endHour % 24
-        while self._quitTask is False:
+    def _timerModeTask(self):
+        self._streetLighterTimerself._streetLighterTimerStartDate
+        self._streetLighterTimerDuration
+        while True:
             time.sleep(10)
+            if not self._streetLightTimerEvent.is_set():
+                continue
+            endMinutes = self._streetLighterTimerStartDate.minute + self._streetLighterTimerDuration.minuteDuration
+            endHour = self._streetLighterTimerStartDate.hour + self._streetLighterTimerDuration.hourDuration
+            hasNextDay = False
+            if endMinutes >= 60:
+                endHour = endHour + 1
+                endMinutes = endMinutes % 60
+            if endHour >= 24:
+                hasNextDay = True
+                endHour = endHour % 24
             now = datetime.now()
             hour = now.hour
             minute = now.minute
             if hasNextDay is True:
-                if hour >= startDate.hour and minute >= startDate.minute:
+                if hour >= self._streetLighterTimerStartDate.hour and minute >= self._streetLighterTimerStartDate.minute:
                     self._streetLight.brightness = 100
                 elif hour <= endHour and minute <= endMinutes:
                     self._streetLight.brightness = 100
@@ -67,9 +90,9 @@ class App:
                     self._streetLight.brightness = 0
             
             if hasNextDay is False:
-                if hour < startDate.hour:
+                if hour < self._streetLighterTimerStartDate.hour:
                     self._streetLight.brightness = 0
-                elif hour == startDate.hour and minute <= startDate.minute:
+                elif hour == self._streetLighterTimerStartDate.hour and minute <= self._streetLighterTimerStartDate.minute:
                     self._streetLight.brightness = 0
                 elif hour > endHour:
                     self._streetLight.brightness = 0
@@ -116,16 +139,7 @@ class App:
             return
         self._mqttThread = threading.Thread(name='mqttThread', target=self._mqtt.run, daemon=True)
         self._mqttThread.start()
-        startDate = {
-            "hour": 19,
-            "minute": 0
-        }
-        duration = {
-            "hourDuration": 9,
-            "minuteDuration": 0
-        }
-        self._quitTask = True
-        self._streetLightWorkThread = threading.Thread(name="streetThread",target=self._timerModeTask,args=(startDate, duration))
+        self._streetLightWorkThread = threading.Thread(name="streetThreadTimer",target=self._timerModeTask)
         self._streetLightWorkThread.start()
 
         sleepCount = 10

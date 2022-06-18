@@ -7,8 +7,10 @@ from .uartChannel import UartChannel
 import threading
 import time
 import json
+from . import _logging
 
 from datetime import datetime
+
 class App:
     def __init__(self, mqttHost, mqttPort, uartPort='/dev/ttyUSB0', 
                         uartBaudrate=9600,
@@ -66,6 +68,7 @@ class App:
         while True:
             time.sleep(10)
             if not self._streetLightTimerEvent.is_set():
+                _logging._logger.debug("timerMode is disable, skip!!!!")
                 continue
             endMinutes = self._streetLighterTimerStartDate["minute"] + self._streetLighterTimerDuration["minuteDuration"]
             endHour = self._streetLighterTimerStartDate["hour"] + self._streetLighterTimerDuration["hourDuration"]
@@ -94,11 +97,13 @@ class App:
             if hasNextDay is False:
                 if hour < self._streetLighterTimerStartDate["hour"]:
                     self._streetLight.brightness = 0
-                elif hour == self._streetLighterTimerStartDate["hour"] and minute <= self._streetLighterTimerStartDate["minute"]:
+                elif hour == self._streetLighterTimerStartDate["hour"] and minute < self._streetLighterTimerStartDate["minute"]:
                     self._streetLight.brightness = 0
+                elif hour == self._streetLighterTimerStartDate["hour"] and minute >= self._streetLighterTimerStartDate["minute"]:
+                    self._streetLight.brightness = 100
                 elif hour > endHour:
                     self._streetLight.brightness = 0
-                elif hour == endHour and minute >= endMinutes:
+                elif hour == endHour and minute > endMinutes:
                     self._streetLight.brightness = 0
                 else:
                     self._streetLight.brightness = 100
@@ -147,16 +152,16 @@ class App:
         sleepCount = 10
         while True:
             if sleepCount >= self._pingDuration and sleepCount % self._pingDuration  == 0:
-                print("send ping")
                 ping = self._getPingMsg()
                 client = self._mqtt.client
                 if ping is not None and client is not None:
+                    _logging._logger.debug("send ping: %s" % ping)
                     self._mqtt.client.publish(self._pingTopic, payload=json.dumps(ping))
             if sleepCount >= self._notifySensorStatusDuration and sleepCount % self._notifySensorStatusDuration == 0:
-                print("send notify")
                 notify = self._getNotifySensorStatusMsg()
                 client = self._mqtt.client
                 if notify is not None and client is not None:
+                    _logging._logger.debug("notify sensor: %s" % notify)
                     self._mqtt.client.publish(self._notifySensorStatusTopic, payload=json.dumps(notify))
             time.sleep(1)
             sleepCount = sleepCount + 1
@@ -164,8 +169,10 @@ class App:
                 sleepCount = 0
 
     def _setLightpoleMode(self,request):
+        _logging._logger.debug("request: %s" % request)
         mode = request["params"]["mode"]
         if mode == "timer":
+            _logging._logger.debug("change to timer mode")
             self._streetLighterTimerStartDate = {
                 "hour": request["params"]["config"]["hour"],
                 "minute": request["params"]["config"]["minute"]
@@ -176,12 +183,14 @@ class App:
             }
             self._streetLightTimerEvent.set()
         elif mode == "manual":
+            _logging._logger.debug("change to manual mode")
             self._streetLightTimerEvent.clear()
             if request["params"]["config"]["start"] == "on":
                 self._streetLight.brightness = 100
             else:
                 self._streetLight.brightness = 0
         elif mode == "smart":
+            _logging._logger.debug("change to smart mode")
             self._streetLightTimerEvent.clear()
 
     def _onMessage(self, client, userdata, msg):
@@ -189,8 +198,10 @@ class App:
             obj = json.loads(msg.payload)
             topic = msg.topic
         except:
+            _logging._logger.error("mqtt recive error msg: %s" % msg.payload )
             return
         else:
+            _logging._logger.info("mqtt receive: %s"  % obj)
             method = obj["method"]
             if method == "mqtt.lightMode":
                 self._setLightpoleMode(obj)

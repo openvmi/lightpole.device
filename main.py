@@ -1,5 +1,7 @@
+from matplotlib.colors import LightSource
 from lightpole.app import App
 from lightpole.config import getConfiguration
+import lightpole
 
 def main():
     configuration, logDir = getConfiguration()
@@ -31,4 +33,7 @@ def main():
 
 
 if __name__ == "__main__":
+    lightpole.enableConsoleHandler()
+    lightpole.enableFileHandler()
+    lightpole.setLogLevel('debug')
     main()

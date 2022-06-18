@@ -101,7 +101,7 @@ class StreetLighting:
 
     @brightness.setter
     def brightness(self, value):
-        print('trying to set brightness')
+        print('trying to set brightness:', value)
         cmd_reg = ['0x05','0x06','0x00','0x04','0x00']
         cmd_reg.append(hex(value))
         cmd_plus = bytearray([int(x,0) for x in cmd_reg])

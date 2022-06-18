@@ -34,3 +34,36 @@
 }
 //当mode为smart的时候，config的值为待定
 ```
+
+## 测试
+
+```js
+//设置为手动模式
+device/temparea/tempid/request
+{
+    "jsonrpc": "2.0",
+    "method": "mqtt.lightMode",
+    "params": {
+        "mode": "manual",
+        "config": {
+            "start": "off"
+        } 
+    }
+}
+
+//设置为定时模式
+device/temparea/tempid/request
+{
+    "jsonrpc": "2.0",
+    "method": "mqtt.lightMode",
+    "params": {
+        "mode": "timer",
+        "config": {
+            "hour": 18,
+            "minute": 0,
+            "hourDuration": 1,
+            "minutesDuration": 30,
+        } 
+    }
+}
+```

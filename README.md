@@ -32,4 +32,5 @@
 {
     "start": "on" //on代表打开， off代表关闭
 }
+//当mode为smart的时候，config的值为待定
 ```

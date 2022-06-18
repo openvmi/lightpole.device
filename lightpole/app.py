@@ -163,9 +163,34 @@ class App:
             if sleepCount > sys.maxsize - 10:
                 sleepCount = 0
 
+    def _setLightpoleMode(self,request):
+        mode = request["params"]["mode"]
+        if mode == "timer":
+            self._streetLighterTimerStartDate = {
+                "hour": request["params"]["config"]["hour"],
+                "minute": request["params"]["config"]["minute"]
+            }        
+            self._streetLighterTimerDuration = {
+                "hourDuration": request["params"]["config"]["hourDuration"],
+                "minuteDuration": request["params"]["config"]["minutesDuration"]
+            }
+            self._streetLightTimerEvent.set()
+        elif mode == "manual":
+            self._streetLightTimerEvent.clear()
+            if request["params"]["config"]["start"] == "on":
+                self._streetLight.brightness = 100
+            else:
+                self._streetLight.brightness = 0
+        elif mode == "smart":
+            self._streetLightTimerEvent.clear()
 
     def _onMessage(self, client, userdata, msg):
-        print(msg.topic)
-        print(msg.payload)
-        print(msg.qos)
-        print(msg.retain)
+        try:
+            obj = json.loads(msg.payload)
+            topic = msg.topic
+        except:
+            return
+        else:
+            method = obj["method"]
+            if method == "mqtt.lightMode":
+                self._setLightpoleMode(obj)

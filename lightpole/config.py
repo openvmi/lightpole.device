@@ -1,3 +1,4 @@
+from encodings import utf_8
 import json
 from pathlib import Path
 import os, sys
@@ -30,7 +31,7 @@ def getConfiguration():
     if configFile.is_file() is False:
         return createDefaultFile(), vmiDir
     
-    configuration = configFile.read_text()
+    configuration = configFile.read_text(encoding='utf-8')
     try:
         configDict = json.loads(configuration)
     except Exception:

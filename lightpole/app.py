@@ -1,4 +1,6 @@
 import sys
+
+from grpc import insecure_channel
 from .mqttChannel import MqttChannel
 from .protocol import Protocol
 from .weatherStation import WeatherStationDevice
@@ -40,11 +42,13 @@ class App:
 
         self._mqttThread = None
 
-        self._pingDuration = 10
+        self._pingDuration = 11
         self._pingTopic = 'device/' + self._deviceArea + '/' + self._deviceId + '/ping'
 
-        self._notifySensorStatusDuration = 30
+        self._notifySensorStatusDuration = 32
         self._notifySensorStatusTopic = 'device/' + self._deviceArea + '/' + self._deviceId + '/notify'
+
+        self._notifyInspectionDuration = 7
 
         self._streetLightWorkThread = None
         self._streetLightWorkMode = "manual"
@@ -137,6 +141,8 @@ class App:
     def _getInspectionStatusMsg(self):
         proto = Protocol(deviceId=self._deviceId, deviceArea=self._deviceArea)
         proto.employeeID = self._streetLight.iccard
+        if proto.employeeID is None:
+            return None
         proto.employeeName = "unknown"
         proto.employeeTemperature = 28
         return proto.getInspectionStatusInJson()
@@ -157,12 +163,20 @@ class App:
                 if ping is not None and client is not None:
                     _logging._logger.debug("send ping: %s" % ping)
                     self._mqtt.client.publish(self._pingTopic, payload=json.dumps(ping))
+                
             if sleepCount >= self._notifySensorStatusDuration and sleepCount % self._notifySensorStatusDuration == 0:
                 notify = self._getNotifySensorStatusMsg()
                 client = self._mqtt.client
                 if notify is not None and client is not None:
                     _logging._logger.debug("notify sensor: %s" % notify)
                     self._mqtt.client.publish(self._notifySensorStatusTopic, payload=json.dumps(notify))
+            
+            if sleepCount >= self._notifyInspectionDuration and sleepCount % self._notifyInspectionDuration == 0:
+                inspection = self._getInspectionStatusMsg()
+                client = self._mqtt.client
+                if inspection is not None and client is not None:
+                    _logging._logger.debug("notify inspection: %s" % inspection)
+                    self._mqtt.client.publish(self._notifySensorStatusTopic, payload=json.dumps(inspection))
             time.sleep(1)
             sleepCount = sleepCount + 1
             if sleepCount > sys.maxsize - 10:

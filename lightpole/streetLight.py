@@ -92,33 +92,29 @@ class StreetLighting:
         command = bytes([0x05, 0x04, 0x00, 0x06, 0x00, 0x01, 0xD0, 0x4F])
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
-            self._brightness = 'error'
+            self._brightnessStatus = 'error'
         else:
-            self._brightness = 'normal'
+            self._brightnessStatus = 'normal'
             result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/1)
         return result
 
     @brightness.setter
     def brightness(self, value):
-        print('trying to set brightness:', value)
+        print('trying to set brightness')
         cmd_reg = ['0x05','0x06','0x00','0x04','0x00']
         cmd_reg.append(hex(value))
         cmd_plus = bytearray([int(x,0) for x in cmd_reg])
         cmd_plus = cmd_plus + self.crc16(cmd_plus)
         result = self._channel.queryValue(command=cmd_plus, responseLength=8)
         if result is None:
-            self._brightness = 'error'
+            self._brightnessStatus = 'error'
         else:
-            self._brightness = 'normal'
+            self._brightnessStatus = 'normal'
         return result
     
     def _checkStatus(self, status):
-        if self._iccardStatus == status and \
-            self._inputvoltageStatus == status and \
-            self._outputcurrentStatus == status and \
-            self._outputpowerStatus == status and \
-            self._electricityConsumptionStatus == status and \
+        if self._electricityConsumptionStatus == status and \
             self._brightnessStatus == status :
             return True
             

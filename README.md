@@ -67,3 +67,19 @@ device/temparea/tempid/request
     }
 }
 ```
+
+## 运行参数配置
+
+```js
+{
+    "deviceId": "001",
+    "deviceArea": "湖北工程职业技术学院",
+	"host": "192.168.0.107",
+	"port": 1883,
+    "user": "xxxxx",
+    "pwd": "xxxx",
+    "consoleLog": "enable",
+    "fileLog": "enable",
+    "logLevel": "debug"
+}
+```

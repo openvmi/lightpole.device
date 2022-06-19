@@ -1,5 +1,6 @@
 from unittest import result
 
+from . import _logging
 
 class StreetLighting:
     def __init__(self, channel) -> None:
@@ -104,8 +105,9 @@ class StreetLighting:
 
     @brightness.setter
     def brightness(self, value):
-        print('trying to set brightness')
+        _logging._logger.debug("Try to set brightness: %d, actual value: %d" % (value, self._brightness))
         if self._brightness == value:
+            _logging._logger.debug("actual brightness: %d, no need chagne, return" % value)
             return
         cmd_reg = ['0x05','0x06','0x00','0x04','0x00']
         cmd_reg.append(hex(value))

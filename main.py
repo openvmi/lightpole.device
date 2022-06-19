@@ -12,9 +12,19 @@ def main():
     mqttUser = configuration.get("user", None)
     mqttPwd = configuration.get("pwd",None)
 
+    enableConsole = configuration.get("consoleLog", None)
+    enableFileLog = configuration.get("fileLog", None)
+    logLevel = configuration.get('logLevel', "warning")
+
     print(configuration)
     print(logDir)
     
+    if enableConsole is not None and enableConsole.lower() == "enable":
+        lightpole.enableConsoleHandler()
+    
+    if enableFileLog is not None and enableFileLog.lower() == "enable":
+        lightpole.enableFileHandler()
+    lightpole.setLogLevel(logLevel)
     if mqttHost is None or mqttPort is None:
         print('Please provide valid mqtt host and port')
         exit(1)
@@ -33,7 +43,4 @@ def main():
 
 
 if __name__ == "__main__":
-    lightpole.enableConsoleHandler()
-    lightpole.enableFileHandler()
-    lightpole.setLogLevel('debug')
     main()

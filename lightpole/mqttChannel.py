@@ -2,6 +2,7 @@ from matplotlib.style import use
 import paho.mqtt.client as mqtt
 import time
 import json
+from . import _logging
 
 class MqttChannel:
     def __init__(self, deviceId, deviceArea, host, port, onmessage, configuration=None) -> None:
@@ -14,18 +15,19 @@ class MqttChannel:
         self._onmessage = onmessage
 
     def _onConnect(self, client, userdata, flags, rc):
-        print("connected")
+        _logging._logger.info("mqtt channel connected")
         self.client = client
         topicPrefix = 'device/' + self._deviceArea + '/' + self._deviceId + '/'
         client.subscribe(topicPrefix + 'request')
         
     def _onDisconnect(self, client, userdata, rc):
         self.client = None
+        _logging._logger.warn("mqtt channel disconnected")
 
     def run(self):
         while True:
-            print(self._host)
-            print(self._port)
+            _logging._logger.info("mqtt host: %s" % self._host)
+            _logging._logger.info("mqtt port: %s" % self._port)
             _client = mqtt.Client()
             _client.on_connect = self._onConnect
             _client.on_message = self._onmessage
@@ -34,7 +36,7 @@ class MqttChannel:
             _client.connect(self._host, self._port)
             _client.loop_forever()
             time.sleep(20)
-            print('mqtt reconnect')
+            _logging._logger.warn("mqtt channel reconnect")
 
 
 if __name__ == "__main__":

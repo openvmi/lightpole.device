@@ -6,7 +6,10 @@ import os, sys
 def getDefault():
     default = {
         "deviceId": "tempId",
-        "deviceArea": "tempArea"
+        "deviceArea": "tempArea",
+        "consoleLog": "enable",
+        "fileLog": "enable",
+        "logLevel": "warning"
     }
     return default
 

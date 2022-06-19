@@ -223,7 +223,7 @@ class Protocol:
             }
         }
         inspectionData = {
-            "employeeID": self._employeeID,
+            "employeeID": str(self._employeeID),
             "employeeName": self._employeeName,
             "employeeTemperature": self._employeeTemperature
         }

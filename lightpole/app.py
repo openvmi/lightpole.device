@@ -132,8 +132,10 @@ class App:
         proto.pm2_5 = self._weatherStation.pm2_5
         proto.pm10 = self._weatherStation.pm10
         proto.carbonDioxide = self._weatherStation.carbonDioxide
+
         proto.power = self._streetLight.electricityConsumption
         proto.lightingLevel = self._streetLight.brightness
+        
         proto.workMode = self._streetLight._workMode
         proto.lightingStatus = "normal"
         return proto.getSensorStatusInJson()

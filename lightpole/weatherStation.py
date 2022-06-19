@@ -1,3 +1,4 @@
+from . import _logging
 class WeatherStationDevice:
     def __init__(self, channel) -> None:
         self._channel = channel
@@ -18,11 +19,12 @@ class WeatherStationDevice:
         if result is None:
             self._windSpeedStatus = "error"
             result = 0
+            _logging._logger.error("READ windSpeed ERROR!!!")
         else:
             self._windSpeedStatus = "normal"
-            print("windSpeed", result)
             result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
+        _logging._logger.debug("windSpeed: %d" % result)
         return result
 
     @property
@@ -31,12 +33,13 @@ class WeatherStationDevice:
         result = self._channel.queryValue(command=command, responseLength=7)
         if result is None:
             self._temperatureStatus = "error"
+            _logging._logger.error("READ temperature ERROR!!!")
             result = 0
         else:
             self._temperatureStatus = "normal"
-            print("temperature:",result)
             result = int(hex(result[3]<<8|result[4]),16)
             result = round(result/10)
+        _logging._logger.debug("temperature: %d" % result)
         return result
 
     @property
@@ -46,6 +49,7 @@ class WeatherStationDevice:
         if result is None:
             self._humidityStatus = "error"
             result = 0
+            _logging._logger.error("READ humidity ERROR!!!")
         else:
             self._humidityStatus = "normal"
             result = int(hex(result[3]<<8|result[4]),16)
@@ -59,6 +63,7 @@ class WeatherStationDevice:
         if result is None:
             self._illuminanceStatus = "error"
             result = 0
+            _logging._logger.error("READ illuminance ERROR!!!")
         else:
             self._illuminanceStatus = "normal"
             result = int(hex(result[5]<<8|result[6]),16)
@@ -72,6 +77,7 @@ class WeatherStationDevice:
         if result is None:
             self._noiseStatus = "error"
             result = 0
+            _logging._logger.error("READ noise ERROR!!!")
         else:
             self._noiseStatus = "normal"
             result = int(hex(result[3]<<8|result[4]),16)
@@ -85,6 +91,7 @@ class WeatherStationDevice:
         if result is None:
             self._rainStatus = "error"
             result = 0
+            _logging._logger.error("READ rain ERROR!!!")
         else:
             self._rainStatus = "normal"
             result = int(hex(result[3]<<8|result[4]),16)
@@ -98,6 +105,7 @@ class WeatherStationDevice:
         if result is None:
             self._pm2_5Status = "error"
             result = 0
+            _logging._logger.error("READ pm2_5 ERROR!!!")
         else:
             self._pm2_5Status = "normal"
             result = int(hex(result[3]<<8|result[4]),16)
@@ -111,6 +119,7 @@ class WeatherStationDevice:
         if result is None:
             self._pm10Status = "error"
             result = 0
+            _logging._logger.error("READ pm10 ERROR!!!")
         else:
             self._pm10Status = "normal"
             result = int(hex(result[3]<<8|result[4]),16)
